@@ -1,0 +1,6 @@
+@AiAgent.GoogleCalService_HostAddress = http://localhost:5277
+
+GET {{AiAgent.GoogleCalService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

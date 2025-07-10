@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>0bf9e397-b5aa-48bd-89d3-4b9b975de4b6</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\AiAgent1\AiAgent.OpenAiService\AiAgent.OpenAiService.csproj" />
+    <ProjectReference Include="..\AiAgent.ApiService\AiAgent.ApiService.csproj" />
+    <ProjectReference Include="..\AiAgent.GoogleCalService\AiAgent.GoogleCalService.csproj" />
+    <ProjectReference Include="..\AiAgent.OutLookService\AiAgent.OutLookService.csproj" />
+    <ProjectReference Include="..\AiAgent.Web\AiAgent.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="8.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.1" />
+  </ItemGroup>
+
+</Project>
