@@ -13,6 +13,9 @@ using Azure.Identity;
 using Microsoft.Graph.Models.ODataErrors;
 using Microsoft.Kiota.Abstractions.Authentication;
 using static System.Net.WebRequestMethods;
+using System.ComponentModel.DataAnnotations;
+using AiAgent.MobileServiceApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace AiAgent.OutlookCalendarService.Controllers
 {
@@ -22,7 +25,8 @@ namespace AiAgent.OutlookCalendarService.Controllers
     {
         private readonly IConfiguration _config;
         private readonly IConfidentialClientApplication _msalClient;
-        public OutlookCalendarController(IConfiguration config)
+        private readonly ApplicationDbContext _context;
+        public OutlookCalendarController(IConfiguration config, ApplicationDbContext context)
         {
             _config = config;
             _msalClient = ConfidentialClientApplicationBuilder
@@ -30,13 +34,14 @@ namespace AiAgent.OutlookCalendarService.Controllers
                 .WithClientSecret("eRd8Q~jdjll3I-vl-H4Mj8ibSZSLguJ9UP1Y5dqS")
                 .WithAuthority(new Uri($"https://login.microsoftonline.com/common"))
                 .Build();
+            _context = context;
         }
 
         [HttpGet("auth-link")]
         public IActionResult GetAuthLink()
         {
             var clientId = "636bc4b3-9e68-4fcc-9ab5-2750ff8bf135";
-            var redirectUri = "https://localhost:7032/api/OutlookCalendar/callback";
+            var redirectUri = "https://bacbba3bc43f.ngrok-free.app/api/OutlookCalendar/callback";
             var scopes = "offline_access Calendars.ReadWrite";
             var url = $"https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id={clientId}&response_type=code&redirect_uri={Uri.EscapeDataString(redirectUri)}&response_mode=query&scope={Uri.EscapeDataString(scopes)}";
             return Ok(new { url });
@@ -44,11 +49,11 @@ namespace AiAgent.OutlookCalendarService.Controllers
 
         // 2. OAuth2 callback endpoint (returns refresh token to user for demo)
         [HttpGet("callback")]
-        public async Task<IActionResult> Callback([FromQuery] string code)
+        public async Task<IActionResult> Callback([FromQuery] string code, [FromQuery] string state)
         {
             var clientId = "636bc4b3-9e68-4fcc-9ab5-2750ff8bf135";
             var clientSecret = "eRd8Q~jdjll3I-vl-H4Mj8ibSZSLguJ9UP1Y5dqS";
-            var redirectUri = "https://localhost:7032/api/OutlookCalendar/callback";
+            var redirectUri = "https://bacbba3bc43f.ngrok-free.app/api/OutlookCalendar/callback";
             var tokenEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 
             using var httpClient = new HttpClient();
@@ -69,18 +74,34 @@ namespace AiAgent.OutlookCalendarService.Controllers
             var json = System.Text.Json.JsonDocument.Parse(responseString);
             var refreshToken = json.RootElement.GetProperty("refresh_token").GetString();
 
-            return Content($"Your Outlook account is now linked! Please copy and save this refresh token for use in the bot: {refreshToken}");
+            // POST the refresh token to the bot's webhook endpoint
+            var chat = await _context.Chats.FirstOrDefaultAsync(c => c.Code == state);
+            if (chat != null)
+            {
+                var userChat = await _context.UserChats
+                    .Include(uc => uc.User)
+                    .FirstOrDefaultAsync(uc => uc.ChatId == chat.Id);
+
+                if (userChat?.User != null)
+                {
+                    userChat.User.OutlookRefreshToken = refreshToken;
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            // Return a simple message to the user
+            return Content("<html><body style='display:flex;align-items:center;justify-content:center;height:100vh;'><h2>You can now close the page and continue the dialogue.</h2></body></html>", "text/html");
         }
 
         [HttpPost("schedule")]
-        public async Task<IActionResult> ScheduleMeeting([FromBody] CalendarEventRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> ScheduleMeeting([FromQuery][Required] string refreshToken, [FromBody] CalendarEventRequest request, CancellationToken cancellationToken)
         {
 
             var clientId = "636bc4b3-9e68-4fcc-9ab5-2750ff8bf135";
             var clientSecret = "eRd8Q~jdjll3I-vl-H4Mj8ibSZSLguJ9UP1Y5dqS";
             var tenantId = "9a3b887a-0ea7-40e9-b940-da24c82ee38b";
-            var refreshToken = "M.C536_SN1.0.U.-CnEqfGbG4IU!4AAGau2MXmy8VAL47MjOd!Ci1JDlOLHT4ZqTcH9XU9EP5q4Hv671*DyQDdxmtZqRGu43tUb4MPbRVNOXCYoTJ6ik8Txs9rWHqaf1fzcn7wg1ugVXCnvkSSRIcrxnFqH8F7DhZs*cbEN0x9GVVPITEAt7zB8xgSnJi2rAYmAO2RfWN1sHRS7NHD4VP2w3kcAh3C9Agujwq6I61GscTi!4sJkA7qPWq3EAF1GU14YQO5Qi!chWLxSuQSRVP0qGw0zW7dG8kutkVV4JhnBTW5BlMvC2fEY7fmY8lEte!CIm4VUZGcUrlwuNZCBJsJohBTZJnLpOsXtYzEZ*XiUduz3jDmsfjzi!0gOTv2xZoJQ*BhIMAr0XkOaojw$$";
-            var redirectUri = "https://localhost:7032/api/OutlookCalendar/callback";
+            //var refreshToken = "M.C536_SN1.0.U.-CnEqfGbG4IU!4AAGau2MXmy8VAL47MjOd!Ci1JDlOLHT4ZqTcH9XU9EP5q4Hv671*DyQDdxmtZqRGu43tUb4MPbRVNOXCYoTJ6ik8Txs9rWHqaf1fzcn7wg1ugVXCnvkSSRIcrxnFqH8F7DhZs*cbEN0x9GVVPITEAt7zB8xgSnJi2rAYmAO2RfWN1sHRS7NHD4VP2w3kcAh3C9Agujwq6I61GscTi!4sJkA7qPWq3EAF1GU14YQO5Qi!chWLxSuQSRVP0qGw0zW7dG8kutkVV4JhnBTW5BlMvC2fEY7fmY8lEte!CIm4VUZGcUrlwuNZCBJsJohBTZJnLpOsXtYzEZ*XiUduz3jDmsfjzi!0gOTv2xZoJQ*BhIMAr0XkOaojw$$";
+            var redirectUri = "http://localhost:5046/api/OutlookCalendar/callback";
 
             var tokenEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
             using var httpClient = new HttpClient();

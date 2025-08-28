@@ -1,0 +1,6 @@
+@AiAgent.MobileServiceApi_HostAddress = http://localhost:5090
+
+GET {{AiAgent.MobileServiceApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

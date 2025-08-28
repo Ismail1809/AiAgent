@@ -16,6 +16,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AiAgent.GoogleCalService", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AiAgent.OutLookService", "AiAgent.OutLookService\AiAgent.OutLookService.csproj", "{15C3FD5C-44DD-4089-9DF0-689BB4A6201A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiAgent.GmailService", "AiAgent.GmailService\AiAgent.GmailService.csproj", "{7F381733-618D-D41A-EDF1-BF457784D2DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiAgent.MobileServiceApi", "AiAgent.MobileServiceApi\AiAgent.MobileServiceApi.csproj", "{8BAE8047-569B-5D06-8722-E57739AB2991}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +54,14 @@ Global
 		{15C3FD5C-44DD-4089-9DF0-689BB4A6201A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15C3FD5C-44DD-4089-9DF0-689BB4A6201A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15C3FD5C-44DD-4089-9DF0-689BB4A6201A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F381733-618D-D41A-EDF1-BF457784D2DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F381733-618D-D41A-EDF1-BF457784D2DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F381733-618D-D41A-EDF1-BF457784D2DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F381733-618D-D41A-EDF1-BF457784D2DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BAE8047-569B-5D06-8722-E57739AB2991}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BAE8047-569B-5D06-8722-E57739AB2991}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BAE8047-569B-5D06-8722-E57739AB2991}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BAE8047-569B-5D06-8722-E57739AB2991}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,6 +9,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
 
 builder.Services.AddHostedService<TelegramBotPollingService>();
+builder.Services.AddSingleton<TelegramBotPollingService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
