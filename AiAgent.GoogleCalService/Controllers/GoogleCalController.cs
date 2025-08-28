@@ -30,7 +30,7 @@ namespace AiAgent.GoogleCalendarService.Controllers
         [HttpPost("schedule")]
         public async Task<IActionResult> ScheduleMeeting([FromQuery][Required] string refreshToken, [FromBody] CalendarEventRequest request, CancellationToken cancellationToken)
         {
-            var clientId = "722351317793-pvvn7tgiah8ik3oajucug6oq89t6gbcg.apps.googleusercontent.com";
+            var clientId = "*";
             var clientSecret = "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";
             var calendarId = _config["CalendarId"] ?? "primary";
             var user = _config["GoogleOAuthUser"] ?? "user";
@@ -81,7 +81,7 @@ namespace AiAgent.GoogleCalendarService.Controllers
         [HttpGet("authorize")]
         public IActionResult Authorize()
         {
-            var clientId = "722351317793-pvvn7tgiah8ik3oajucug6oq89t6gbcg.apps.googleusercontent.com";
+            var clientId = "*";
             var redirectUri = "https://39e9bcf6cbed.ngrok-free.app/oauth/callback";
             var scopes = new[]
             {
@@ -103,7 +103,7 @@ namespace AiAgent.GoogleCalendarService.Controllers
         [HttpGet("oauth/callback")]
         public async Task<IActionResult> Callback([FromQuery] string code, [FromQuery] string state)
         {
-            var clientId = "722351317793-pvvn7tgiah8ik3oajucug6oq89t6gbcg.apps.googleusercontent.com";
+            var clientId = "*";
             var clientSecret = "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";
             var redirectUri = "https://39e9bcf6cbed.ngrok-free.app/oauth/callback";
             if (string.IsNullOrEmpty(code))
